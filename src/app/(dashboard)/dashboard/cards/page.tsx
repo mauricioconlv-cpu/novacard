@@ -17,16 +17,24 @@ export default async function CardsListPage() {
     const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
     // Fetch actual user cards (and employees cards if admin)
-    let query = supabase.from('cards').select('*, users!inner(admin_id)');
+    let query = supabase.from('cards').select('*');
 
     if (profile?.role === 'admin') {
         // Admin sees their own cards plus cards of users where admin_id is them
-        query = query.or(`user_id.eq.${user.id},users.admin_id.eq.${user.id}`);
+        const { data: employees } = await supabase.from('users').select('id').eq('admin_id', user.id);
+        const employeeIds = employees?.map(e => e.id) || [];
+        const allTargetIds = [user.id, ...employeeIds];
+
+        query = query.in('user_id', allTargetIds);
     } else {
         query = query.eq('user_id', user.id);
     }
 
-    const { data: cards } = await query.order('created_at', { ascending: false });
+    const { data: cards, error } = await query.order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching cards:", error);
+    }
 
     return (
         <div className={`animate-fade-in ${styles.homeContainer}`}>
