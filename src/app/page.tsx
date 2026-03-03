@@ -60,7 +60,7 @@ export default function Home() {
                 <label>Rol en la plataforma</label>
                 <select name="role" required={!isLogin} className="input-base" style={{ appearance: 'auto' }}>
                   <option value="admin">Administrador (Crear y gestionar cuenta de empresa)</option>
-                  <option value="employee">Empleado (Acceso a tu tarjeta digital)</option>
+                  <option value="independent">Independiente (Cuenta personal sin equipo)</option>
                 </select>
               </div>
             </>

@@ -31,7 +31,7 @@ export async function register(formData: FormData) {
         options: {
             data: {
                 full_name: formData.get('fullName') as string,
-                role: (formData.get('role') as string) || 'employee'
+                role: (formData.get('role') as string) || 'independent'
             }
         }
     }
