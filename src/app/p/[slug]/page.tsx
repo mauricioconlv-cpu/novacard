@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Phone, Mail, Globe, MapPin, Linkedin, Instagram, FileText, Download } from 'lucide-react';
 import styles from './public.module.css';
 import PublicShareButton from './PublicShareButton';
+import AttendanceControls from './AttendanceControls';
 
 export const dynamic = 'force-dynamic'; // Ensure it fetches fresh data
 
@@ -48,11 +49,19 @@ export default async function PublicCardPage({ params }: { params: Promise<{ slu
     // 3. Fetch the User Profile (Bypassing RLS with admin client to get the name/company)
     const { data: profile } = await adminSupabase
         .from('users')
-        .select('full_name, company_name')
+        .select('full_name, company_name, admin_id')
         .eq('id', card.user_id)
         .single();
 
-    // 4. Log Interaction (Fire and forget viewing analytics)
+    // 4. Check if the viewer is the admin of this employee
+    const { data: { user } } = await supabase.auth.getUser();
+    let isViewerAdmin = false;
+
+    if (user && profile?.admin_id === user.id) {
+        isViewerAdmin = true;
+    }
+
+    // 5. Log Interaction (Fire and forget viewing analytics)
     // Supabase RLS is configured to allow anyone to insert into interactions
     supabase.from('interactions').insert([{
         card_id: card.id,
@@ -119,6 +128,13 @@ export default async function PublicCardPage({ params }: { params: Promise<{ slu
                             </a>
                         ))}
                     </div>
+
+                    {/* Admin QR Tools */}
+                    {isViewerAdmin && (
+                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                            <AttendanceControls employeeId={card.user_id} />
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.cardFooter}>
