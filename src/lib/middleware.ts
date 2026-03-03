@@ -37,18 +37,20 @@ export async function updateSession(request: NextRequest) {
 
     if (
         !user &&
-        !request.nextUrl.pathname.startsWith('/login') &&
         !request.nextUrl.pathname.startsWith('/auth') &&
-        request.nextUrl.pathname !== '/'
+        !request.nextUrl.pathname.startsWith('/p/') &&    // Allow public profiles
+        !request.nextUrl.pathname.startsWith('/scan/') && // Allow public scan endpoint
+        !request.nextUrl.pathname.startsWith('/api/') &&  // Allow API endpoints (like vcard generator)
+        request.nextUrl.pathname !== '/' // Home is login
     ) {
-        // no user, potentially respond by redirecting the user to the login page
+        // no user, respond by redirecting the user to the home (login) page
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        url.pathname = '/'
         return NextResponse.redirect(url)
     }
 
-    // If user is signed in and current path is / or /login, redirect to dashboard
-    if (user && (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/login')) {
+    // If user is signed in and current path is /, redirect to dashboard
+    if (user && request.nextUrl.pathname === '/') {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)
