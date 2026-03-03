@@ -1,0 +1,158 @@
+.homeContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.banner {
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.bannerLeft h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.bannerLeft p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 300px;
+}
+
+.bannerFeatures {
+    display: flex;
+    gap: 2rem;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.featureIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardsPlayground {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 2rem 0;
+}
+
+.promoArrow {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    text-align: right;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.cardsGrid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.physicalCard {
+    width: 280px;
+    height: 400px;
+    background: rgba(20, 20, 25, 0.6);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.physicalCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cardHeader {
+    height: 180px;
+    width: 100%;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+
+.cardBody {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+.cardBody h4 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.cardSubtitle {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.cardMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-magenta);
+}
+
+.cardFooter {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--glass-border);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.cardDate {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.newCardBtn {
+    margin-top: 2rem;
+    padding: 1rem 3rem;
+}

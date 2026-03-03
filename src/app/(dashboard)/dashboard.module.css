@@ -1,0 +1,159 @@
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    backdrop-filter: var(--glass-blur);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    z-index: 10;
+}
+
+.logoArea {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.logoIcon {
+    color: var(--color-magenta);
+}
+
+.navLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--border-radius-md);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.navLink:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.navLink.active {
+    border-left: 3px solid var(--color-orange);
+    background: linear-gradient(90deg, var(--color-orange-glow) 0%, transparent 100%);
+    color: var(--color-orange);
+}
+
+.navIcon {
+    opacity: 0.8;
+}
+
+.navLink.active .navIcon {
+    color: var(--color-magenta);
+    opacity: 1;
+}
+
+.sidebarFooter {
+    margin-top: auto;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.5rem;
+}
+
+.logoutBtn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+}
+
+.logoutBtn:hover {
+    color: #ff4b4b;
+    background: rgba(255, 75, 75, 0.1);
+}
+
+/* Header */
+.header {
+    height: 70px;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    background: rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.headerInfo h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-orange), var(--color-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 0 15px var(--color-orange-glow);
+}
+
+.userDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.userName {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.userRole {
+    font-size: 0.75rem;
+    color: var(--color-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Main Content Area */
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative;
+}
+
+.pageContent {
+    padding: 2rem;
+    flex: 1;
+}

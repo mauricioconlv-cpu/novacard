@@ -1,0 +1,199 @@
+.publicContainer {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.cardWrapper {
+    width: 100%;
+    max-width: 420px;
+    background: #0f172a;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cardHeader {
+    height: 160px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: inherit;
+    /* will be overridden by inline style if needed, but page handles gradient */
+}
+
+.logoContainer {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.companyLogo {
+    height: 50px;
+    max-width: 160px;
+    object-fit: contain;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.profileImgContainer {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 4px solid #0f172a;
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.profileImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profileInitials {
+    color: var(--text-secondary, #94a3b8);
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.cardBody {
+    padding: 80px 24px 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profileName {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.companyName {
+    font-size: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.primaryAction {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.primaryAction:active {
+    transform: scale(0.98);
+}
+
+.primaryAction:hover {
+    filter: brightness(1.1);
+}
+
+.secondaryAction {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.secondaryAction:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.fieldsContainer {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.fieldItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.fieldItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.fieldIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    opacity: 0.9;
+}
+
+.cardFooter {
+    padding: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.cardFooter strong {
+    color: white;
+    font-weight: 600;
+}
