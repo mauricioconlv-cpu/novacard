@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { QrCode, Upload, ArrowRight } from 'lucide-react';
+import { Upload, ArrowRight, QrCode } from 'lucide-react';
 import styles from './onboarding.module.css';
 import { completeOnboarding } from '../actions';
+import ImageUploader from '../(dashboard)/components/ImageUploader';
 
 const ADMIN_GOALS = [
     "Gestionar Empleados",
@@ -37,6 +38,7 @@ export default function OnboardingClient({ userRole = 'employee' }: { userRole?:
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [greetingsIndices, setGreetingsIndices] = useState([0, 1]);
+    const [avatarUrl, setAvatarUrl] = useState<string>('');
 
     const activeGoalsList = userRole === 'admin' ? ADMIN_GOALS : EMPLOYEE_GOALS;
 
@@ -141,14 +143,14 @@ export default function OnboardingClient({ userRole = 'employee' }: { userRole?:
                         <h1 className={styles.title} style={{ textAlign: 'center' }}>Haz que tu tarjeta destaque 📸</h1>
                         <p className={styles.subtitle} style={{ textAlign: 'center' }}>Añade una foto tuya y completa tu perfil</p>
 
-                        <div className={styles.uploadArea}>
-                            <div className={styles.mockupPhone}>
-                                <div className={styles.mockupPhotoPlace}></div>
-                                <div className={styles.mockupLines}></div>
-                            </div>
-                            <button type="button" className={`btn btn-glass ${styles.uploadBtn}`}>
-                                <Upload size={18} /> Sube una foto
-                            </button>
+                        <div style={{ marginTop: '2rem', maxWidth: '300px', margin: '2rem auto' }}>
+                            <ImageUploader
+                                bucket="profile-photos"
+                                currentUrl={avatarUrl}
+                                onUploadSuccess={(url) => setAvatarUrl(url)}
+                                label="Foto de perfil (Recomendado)"
+                            />
+                            <input type="hidden" name="avatar_url" value={avatarUrl} />
                         </div>
 
                         <div className={styles.inputGroup} style={{ marginTop: '2rem' }}>

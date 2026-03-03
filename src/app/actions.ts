@@ -55,7 +55,7 @@ export async function completeOnboarding(formData: FormData) {
     }
 
     const company_name = formData.get('company_name') as string;
-    // Realistically you'd handle file upload to storage here for avatar
+    const avatar_url = formData.get('avatar_url') as string;
 
     let newCompanyId = null;
     if (company_name) {
@@ -77,6 +77,7 @@ export async function completeOnboarding(formData: FormData) {
         .update({
             company_name: company_name || null,
             company_id: newCompanyId,
+            avatar_url: avatar_url || null,
             onboarding_completed: true
         })
         .eq('id', user.id)
