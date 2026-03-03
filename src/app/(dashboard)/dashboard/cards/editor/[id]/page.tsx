@@ -20,7 +20,7 @@ export default async function CardEditorPage({ params }: { params: Promise<{ id:
     // Also get user profile to set default names for new cards
     const { data: profile } = await supabase
         .from('users')
-        .select('full_name, company_name')
+        .select('full_name, company_name, role')
         .eq('id', user.id)
         .single();
 
@@ -59,9 +59,26 @@ export default async function CardEditorPage({ params }: { params: Promise<{ id:
             is_active: true
         };
         initialFields = [
-            { id: 'temp-1', type: 'phone', label: 'Móvil', value: '', icon: 'Phone' },
-            { id: 'temp-2', type: 'email', label: 'Trabajo', value: '', icon: 'Mail' }
         ];
+    }
+
+    let adminEmployees = null;
+    let adminCompanies = null;
+
+    if (profile?.role === 'admin') {
+        // Fetch employees under this admin
+        const { data: employees } = await supabase
+            .from('users')
+            .select('id, full_name, email, company_id')
+            .eq('admin_id', user.id);
+        adminEmployees = employees || [];
+
+        // Fetch companies under this admin
+        const { data: companies } = await supabase
+            .from('companies')
+            .select('id, name')
+            .eq('admin_id', user.id);
+        adminCompanies = companies || [];
     }
 
     return (

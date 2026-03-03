@@ -57,10 +57,26 @@ export async function completeOnboarding(formData: FormData) {
     const company_name = formData.get('company_name') as string;
     // Realistically you'd handle file upload to storage here for avatar
 
+    let newCompanyId = null;
+    if (company_name) {
+        const { data: newCompany, error: companyError } = await supabase
+            .from('companies')
+            .insert({ admin_id: user.id, name: company_name })
+            .select('id')
+            .single();
+
+        if (companyError) {
+            console.error("Error creating company:", companyError);
+        } else if (newCompany) {
+            newCompanyId = newCompany.id;
+        }
+    }
+
     const { error } = await supabase
         .from('users')
         .update({
             company_name: company_name || null,
+            company_id: newCompanyId,
             onboarding_completed: true
         })
         .eq('id', user.id)

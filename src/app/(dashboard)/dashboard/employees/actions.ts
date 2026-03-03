@@ -1,7 +1,8 @@
 'use server';
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase-server';
 
 export async function createEmployee(prevState: any, formData: FormData) {
     const email = formData.get('email') as string;
@@ -14,11 +15,17 @@ export async function createEmployee(prevState: any, formData: FormData) {
     }
 
     try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            return { error: 'Sesión no válida o expirada. Por favor, inicia sesión de nuevo.' };
+        }
+
         // Create an admin client bypassing RLS specifically for auth operations
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-        const adminAuthClient = createClient(supabaseUrl, supabaseServiceKey, {
+        const adminAuthClient = createSupabaseClient(supabaseUrl, supabaseServiceKey, {
             auth: {
                 autoRefreshToken: false,
                 persistSession: false
@@ -33,7 +40,8 @@ export async function createEmployee(prevState: any, formData: FormData) {
             user_metadata: {
                 full_name: fullName,
                 role: 'employee',
-                work_schedule: workSchedule
+                work_schedule: workSchedule,
+                admin_id: user.id
             }
         });
 

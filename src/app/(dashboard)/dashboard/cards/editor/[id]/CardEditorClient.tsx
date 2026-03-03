@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Image as ImageIcon, Plus, GripVertical, Trash2, Phone, Mail, Globe, MapPin, Linkedin, Instagram, FileText, Settings } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Plus, GripVertical, Trash2, Phone, Mail, Globe, MapPin, Linkedin, Instagram, FileText, Settings, Hash, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { saveCard } from '../../actions';
 import ImageUploader from '../../../../components/ImageUploader';
@@ -42,15 +42,50 @@ const FIELD_TYPES = [
     { value: 'linkedin', label: 'LinkedIn', icon: <Linkedin size={16} /> },
     { value: 'instagram', label: 'Instagram', icon: <Instagram size={16} /> },
     { value: 'pdf', label: 'Documento PDF', icon: <FileText size={16} /> },
+    { value: 'nss', label: 'NSS', icon: <Hash size={16} /> },
+    { value: 'emergency_contact', label: 'Contacto de Emergencia', icon: <Heart size={16} /> },
+    { value: 'company_address', label: 'Dirección Base', icon: <MapPin size={16} /> },
 ];
 
-export default function CardEditorClient({ initialCard, initialFields, userProfile }: { initialCard: CardData, initialFields: CardField[], userProfile: any }) {
+export default function CardEditorClient({
+    initialCard,
+    initialFields,
+    userProfile,
+    adminEmployees,
+    adminCompanies
+}: {
+    initialCard: CardData,
+    initialFields: CardField[],
+    userProfile: any,
+    adminEmployees?: any[],
+    adminCompanies?: any[]
+}) {
     const router = useRouter();
     const [isSaving, setIsSaving] = useState(false);
 
     // State
     const [card, setCard] = useState<CardData>(initialCard);
     const [fields, setFields] = useState<CardField[]>(initialFields);
+
+    // Admin specific state
+    const [targetUserId, setTargetUserId] = useState<string>(
+        userProfile?.role === 'admin' ? (initialCard as any)?.user_id || userProfile.id : userProfile.id
+    );
+    const [companyId, setCompanyId] = useState<string>('');
+
+    // Pre-fill company if the selected employee already has one
+    useEffect(() => {
+        if (userProfile?.role === 'admin' && adminEmployees) {
+            const selectedEmployee = adminEmployees.find(emp => emp.id === targetUserId);
+            if (selectedEmployee?.company_id) {
+                setCompanyId(selectedEmployee.company_id);
+            } else if (targetUserId === userProfile.id && userProfile.company_id) {
+                setCompanyId(userProfile.company_id);
+            } else {
+                setCompanyId('');
+            }
+        }
+    }, [targetUserId, adminEmployees, userProfile]);
 
     // Handlers
     const handleAddBlankField = () => {
@@ -72,7 +107,7 @@ export default function CardEditorClient({ initialCard, initialFields, userProfi
         }
 
         setIsSaving(true);
-        const result = await saveCard(card, fields);
+        const result = await saveCard(card, fields, targetUserId, companyId);
         setIsSaving(false);
 
         if (result.error) {
@@ -90,6 +125,9 @@ export default function CardEditorClient({ initialCard, initialFields, userProfi
             case 'linkedin': return <Linkedin size={20} />;
             case 'instagram': return <Instagram size={20} />;
             case 'pdf': return <FileText size={20} />;
+            case 'nss': return <Hash size={20} />;
+            case 'emergency_contact': return <Heart size={20} />;
+            case 'company_address': return <MapPin size={20} />;
             default: return <Globe size={20} />;
         }
     }
@@ -142,6 +180,45 @@ export default function CardEditorClient({ initialCard, initialFields, userProfi
                                 />
                             </div>
                         </div>
+
+                        {userProfile?.role === 'admin' && (
+                            <>
+                                <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+                                    <label>Asignar Tarjeta a:</label>
+                                    <select
+                                        className={styles.input}
+                                        value={targetUserId}
+                                        onChange={(e) => setTargetUserId(e.target.value)}
+                                        disabled={card.id !== 'new'} // Usually we don't reassign cards after creation to avoid confusion
+                                    >
+                                        <option value={userProfile.id}>Mi Cuenta (Admin)</option>
+                                        {adminEmployees && adminEmployees.map((emp: any) => (
+                                            <option key={emp.id} value={emp.id}>{emp.full_name || emp.email}</option>
+                                        ))}
+                                    </select>
+                                    {card.id !== 'new' && <small style={{ color: 'var(--text-secondary)' }}>El propietario de la tarjeta no se puede cambiar después de creada.</small>}
+                                </div>
+
+                                <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+                                    <label>Empresa {adminEmployees?.find((e: any) => e.id === targetUserId)?.company_id && '(Inamovible)'}</label>
+                                    <select
+                                        className={styles.input}
+                                        value={companyId}
+                                        onChange={(e) => setCompanyId(e.target.value)}
+                                        disabled={!!adminEmployees?.find((e: any) => e.id === targetUserId)?.company_id || (targetUserId === userProfile.id)}
+                                        required={targetUserId !== userProfile.id}
+                                    >
+                                        <option value="">Selecciona Empresa...</option>
+                                        {adminCompanies && adminCompanies.map((comp: any) => (
+                                            <option key={comp.id} value={comp.id}>{comp.name}</option>
+                                        ))}
+                                    </select>
+                                    {!!adminEmployees?.find((e: any) => e.id === targetUserId)?.company_id && (
+                                        <small style={{ color: 'var(--text-secondary)' }}>Este empleado ya tiene una empresa asignada permanentemente.</small>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Branding / Images */}

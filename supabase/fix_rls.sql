@@ -12,3 +12,4 @@ $$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
 CREATE POLICY "Users can view their own profile or admins can view all" 
 ON public.users FOR SELECT 
 USING (auth.uid() = id OR public.is_admin());
+

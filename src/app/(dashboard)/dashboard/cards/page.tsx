@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-server';
+import { redirect } from 'next/navigation';
 import { Plus, CreditCard, Settings, Edit, Eye, Share2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../home.module.css';
@@ -8,12 +9,24 @@ export default async function CardsListPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Fetch actual user cards
-    const { data: cards } = await supabase
-        .from('cards')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
+    if (!user) {
+        redirect('/login');
+    }
+
+    // Get user profile
+    const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+
+    // Fetch actual user cards (and employees cards if admin)
+    let query = supabase.from('cards').select('*, users!inner(admin_id)');
+
+    if (profile?.role === 'admin') {
+        // Admin sees their own cards plus cards of users where admin_id is them
+        query = query.or(`user_id.eq.${user.id},users.admin_id.eq.${user.id}`);
+    } else {
+        query = query.eq('user_id', user.id);
+    }
+
+    const { data: cards } = await query.order('created_at', { ascending: false });
 
     return (
         <div className={`animate-fade-in ${styles.homeContainer}`}>

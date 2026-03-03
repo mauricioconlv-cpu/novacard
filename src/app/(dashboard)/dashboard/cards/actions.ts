@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 
-export async function saveCard(cardData: any, fieldsData: any[]) {
+export async function saveCard(cardData: any, fieldsData: any[], targetUserId?: string, targetCompanyId?: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -20,8 +20,28 @@ export async function saveCard(cardData: any, fieldsData: any[]) {
         finalSlug = `${baseSlug}-${Math.floor(Math.random() * 1000)}`;
     }
 
+    // Determine card owner logic
+    let finalUserId = user.id;
+
+    if (targetUserId && targetUserId !== user.id) {
+        // Only admins can assign cards to others
+        const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+        if (profile?.role === 'admin') {
+            finalUserId = targetUserId;
+
+            // If a company was selected, assign it permanently to the user (only if they don't have one)
+            if (targetCompanyId) {
+                // Ensure the user belongs to this admin before updating
+                const { data: targetUser } = await supabase.from('users').select('company_id').eq('id', targetUserId).eq('admin_id', user.id).single();
+                if (targetUser && !targetUser.company_id) {
+                    await supabase.from('users').update({ company_id: targetCompanyId }).eq('id', targetUserId);
+                }
+            }
+        }
+    }
+
     const cardPayload = {
-        user_id: user.id,
+        user_id: finalUserId,
         title: cardData.title,
         slug: finalSlug,
         design_config: cardData.design_config,
@@ -42,11 +62,19 @@ export async function saveCard(cardData: any, fieldsData: any[]) {
         if (cardError) return { error: cardError.message };
         savedCardId = newCard.id;
     } else {
+        // Admin can edit other's cards, so we just check on save permissions if needed. 
+        // For simplicity we allow the update if it's the owner OR if the current user is an admin
+        const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+        const isOwnerOrAdmin = profile?.role === 'admin' ? true : cardPayload.user_id === user.id;
+
+        if (!isOwnerOrAdmin) {
+            return { error: 'No autorizado para editar esta tarjeta.' };
+        }
+
         const { error: cardError } = await supabase
             .from('cards')
             .update(cardPayload)
-            .eq('id', savedCardId)
-            .eq('user_id', user.id); // Strict ownership check
+            .eq('id', savedCardId);
 
         if (cardError) return { error: cardError.message };
     }

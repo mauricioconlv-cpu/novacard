@@ -23,7 +23,12 @@ export default async function EmployeesPage() {
         redirect('/dashboard');
     }
 
-    // Fetch all employees
+    // Fetch all employees and companies
+    const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .eq('admin_id', user.id);
+
     const { data: employees } = await supabase
         .from('users')
         .select(`
